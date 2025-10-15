@@ -95,12 +95,12 @@ const Expertise = () => {
       <div className="container mx-auto px-4">
         <div className="text-center mb-16 animate-fade-in">
           <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
-            Areas of <span className="text-accent">Expertise</span>
+            Industry-Specific <span className="text-accent">Expertise</span>
           </h2>
           <div className="w-24 h-1 bg-accent mx-auto mb-8"></div>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Specialized translation services across diverse industries with
-            subject matter expertise
+            Professional translation solutions tailored to the unique demands of
+            each sector, powered by subject-matter specialists.
           </p>
         </div>
 

@@ -53,10 +53,11 @@ const About = () => {
               companies, banks, and financial institutions.
             </p>
             <p className="text-muted-foreground mb-4 leading-relaxed">
-              ASH stands for Global Translation Services. We've earned our name
-              by being an international translation agency with global reach,
-              providing the best service and support in over 50 languages with
-              language expertise in every part of the world.
+              ASH stands for Global Translation Services. We’ve earned our name
+              as an international translation agency with global reach,
+              delivering top-tier service and support in over 100 languages,
+              backed by a network of more than expert 50 linguists around the
+              world.
             </p>
             <p className="text-muted-foreground leading-relaxed">
               Our mission is to add unprecedented positive contribution to the
@@ -88,10 +89,10 @@ const About = () => {
         <div className="bg-gradient-to-r from-primary to-secondary p-8 md:p-12 rounded-2xl shadow-navy animate-fade-in">
           <blockquote className="text-center">
             <p className="text-xl md:text-2xl text-primary-foreground font-medium italic mb-4">
-              "The Core and Crux of our vision is the satisfaction of our
-              clients through timely and effective Translation Services. Our
-              main goal is to extend the bridges of communication between people
-              of different languages and cultures."
+              "At the heart of our vision lies client satisfaction — delivered
+              through timely, accurate, and impactful translation services. Our
+              mission is to build strong bridges of communication across
+              languages and cultures, connecting people worldwide."
             </p>
             <footer className="text-accent font-semibold">
               — ASH Translation Co Ltd

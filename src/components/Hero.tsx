@@ -1,106 +1,201 @@
+"use client";
+
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import heroBg from "@/assets/hero-bg.png";
+import image from "@/assets/hero-bg.png";
 
 const Hero = () => {
   return (
-    <section
-      id="home"
-      className="relative min-h-screen flex items-center justify-center overflow-hidden"
-      style={{
-        background: `linear-gradient(135deg, hsl(200 65% 18%) 0%, hsl(200 60% 22%) 50%, hsl(200 55% 26%) 100%)`,
-      }}
-    >
-      {/* Dotted Pattern Overlay */}
-      <div
-        className="absolute inset-0 opacity-10"
+    <>
+      <style>{`
+        @keyframes fade-in-up {
+          from {
+            opacity: 0;
+            transform: translateY(30px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes fade-in-right {
+          from {
+            opacity: 0;
+            transform: translateX(50px);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+
+        @keyframes float-gentle {
+          0%,
+          100% {
+            transform: translateY(0);
+          }
+          50% {
+            transform: translateY(-15px);
+          }
+        }
+
+        .animate-fade-in-up {
+          animation: fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .animate-fade-in-right {
+          animation: fade-in-right 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .float-gentle {
+          animation: float-gentle 4s ease-in-out infinite;
+        }
+
+        .card-3d {
+          transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+          transform-style: preserve-3d;
+        }
+
+        .card-3d:hover {
+          transform: translateY(-8px) scale(1.02);
+          box-shadow: 0 20px 40px rgba(234, 179, 8, 0.3);
+        }
+
+        .button-3d {
+          transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+          transform-style: preserve-3d;
+        }
+
+        .button-3d:hover {
+          transform: translateY(-4px) scale(1.05);
+          box-shadow: 0 15px 30px rgba(234, 179, 8, 0.4);
+        }
+
+        .glass-card {
+          background: rgba(255, 255, 255, 0.08);
+          backdrop-filter: blur(12px);
+          border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .delay-100 {
+          animation-delay: 0.1s;
+        }
+        .delay-200 {
+          animation-delay: 0.2s;
+        }
+        .delay-300 {
+          animation-delay: 0.3s;
+        }
+        .delay-400 {
+          animation-delay: 0.4s;
+        }
+        .delay-500 {
+          animation-delay: 0.5s;
+        }
+        .delay-600 {
+          animation-delay: 0.6s;
+        }
+      `}</style>
+
+      <section
+        id="home"
+        className="relative min-h-screen flex items-center overflow-hidden pt-20 pb-32"
         style={{
-          backgroundImage: `radial-gradient(circle, hsl(45 90% 55%) 1px, transparent 1px)`,
-          backgroundSize: "30px 30px",
+          background: `linear-gradient(135deg, hsl(200 65% 18%) 0%, hsl(200 60% 22%) 50%, hsl(200 55% 26%) 100%)`,
         }}
-      />
-
-      {/* Hero Background Image */}
-      <div className="absolute inset-0 flex items-center justify-center">
-        <img
-          src={heroBg}
-          alt="ASH Translation"
-          className="max-w-3xl w-full opacity-20 animate-float"
+      >
+        <div
+          className="absolute inset-0 opacity-10"
+          style={{
+            backgroundImage: `
+              linear-gradient(rgba(234, 179, 8, 0.15) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(234, 179, 8, 0.15) 1px, transparent 1px)
+            `,
+            backgroundSize: "60px 60px",
+          }}
         />
-      </div>
 
-      {/* Content */}
-      <div className="container mx-auto px-4 relative z-10">
-        <div className="text-center max-w-4xl mx-auto">
-          <h1 className="text-5xl md:text-7xl font-bold text-primary-foreground mb-6 animate-fade-in-up">
-            ASH TRANSLATION
-            <span className="block text-accent mt-2">CO LTD</span>
-          </h1>
+        <div className="container mx-auto px-4 lg:px-8 relative z-10">
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-20">
+            <div className="flex-1 max-w-2xl">
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-primary-foreground mb-6 leading-tight animate-fade-in-up">
+                ASH TRANSLATION
+                <span className="block text-accent mt-2">CO LTD</span>
+              </h1>
 
-          <p className="text-2xl md:text-3xl text-accent mb-8 font-semibold animate-fade-in-up animation-delay-200">
-            Bridging Communication Among People
-          </p>
+              <p className="text-2xl md:text-3xl text-accent mb-6 font-semibold animate-fade-in-up delay-100">
+                Bridging Communication Among People
+              </p>
 
-          <p className="text-lg md:text-xl text-primary-foreground/90 mb-12 max-w-2xl mx-auto animate-fade-in-up animation-delay-400">
-            Professional translation services in 100+ languages, connecting
-            businesses and individuals across the globe with precision and
-            cultural expertise.
-          </p>
+              <p className="text-lg md:text-xl text-primary-foreground/90 mb-10 leading-relaxed animate-fade-in-up delay-200">
+                Professional translation services in 100+ languages, connecting
+                businesses and individuals across the globe with precision and
+                cultural expertise.
+              </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up animation-delay-600">
-            <Button
-              size="lg"
-              className="bg-accent text-accent-foreground hover:bg-accent/90 shadow-gold group text-lg px-8"
-            >
-              Get Started
-              <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              className="border-2 border-accent text-accent hover:bg-accent hover:text-accent-foreground text-lg px-8"
-            >
-              Our Services
-            </Button>
-          </div>
+              <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 mt-8 mb-20">
+                <Button
+                  size="lg"
+                  asChild
+                  className="bg-accent text-accent-foreground hover:bg-accent/90 group text-lg px-8 py-6 button-3d"
+                >
+                  <a href="#contact">
+                    Get Started
+                    <ArrowRight className="ml-2 group-hover:translate-x-2 transition-transform duration-300" />
+                  </a>
+                </Button>
 
-          {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-20 animate-fade-in animation-delay-800">
-            <div className="text-center">
-              <div className="text-4xl md:text-5xl font-bold text-accent mb-2">
-                100+
+                <Button
+                  size="lg"
+                  variant="outline"
+                  asChild
+                  className="border-2 border-accent text-accent hover:bg-accent hover:text-accent-foreground text-lg px-8 py-6 bg-transparent button-3d"
+                >
+                  <a href="#services">Our Services</a>
+                </Button>
               </div>
-              <div className="text-primary-foreground/80">Languages</div>
+
+              <div className="grid grid-cols-2 gap-4 animate-fade-in-up delay-400">
+                {[
+                  { value: "100+", label: "Languages" },
+                  { value: "50+", label: "Linguists" },
+                  { value: "24/7", label: "Support" },
+                  { value: "ISO", label: "Certified" },
+                ].map((stat, i) => (
+                  <div
+                    key={i}
+                    className={`card-3d glass-card rounded-xl p-5 cursor-default delay-${
+                      (i + 5) * 100
+                    }`}
+                  >
+                    <div className="text-3xl md:text-4xl font-bold text-accent mb-1">
+                      {stat.value}
+                    </div>
+                    <div className="text-primary-foreground/80 text-sm">
+                      {stat.label}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
-            <div className="text-center">
-              <div className="text-4xl md:text-5xl font-bold text-accent mb-2">
-                50+
+
+            <div className="flex-1 max-w-xl lg:max-w-2xl animate-fade-in-right">
+              <div className="relative float-gentle">
+                <img
+                  src={image}
+                  alt="Professional Translation Services"
+                  className="w-full rounded-2xl shadow-2xl"
+                  style={{
+                    filter: "drop-shadow(0 25px 50px rgba(234, 179, 8, 0.25))",
+                  }}
+                />
               </div>
-              <div className="text-primary-foreground/80">Linguists</div>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl md:text-5xl font-bold text-accent mb-2">
-                24/7
-              </div>
-              <div className="text-primary-foreground/80">Support</div>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl md:text-5xl font-bold text-accent mb-2">
-                ISO
-              </div>
-              <div className="text-primary-foreground/80">Certified</div>
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Scroll Indicator */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-        <div className="w-6 h-10 border-2 border-accent rounded-full flex items-start justify-center p-2">
-          <div className="w-1 h-3 bg-accent rounded-full animate-pulse"></div>
-        </div>
-      </div>
-    </section>
+      </section>
+    </>
   );
 };
 
