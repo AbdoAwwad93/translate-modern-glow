@@ -87,7 +87,7 @@ const About = () => {
         </div>
 
         {/* Founder's Message */}
-        <div className="mb-16 animate-fade-in">
+        {/* <div className="mb-16 animate-fade-in">
           <Card className="p-8 md:p-12 border-border bg-card shadow-xl">
             <div className="text-center mb-8">
               <h3 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
@@ -97,7 +97,6 @@ const About = () => {
             </div>
 
             <div className="flex flex-col md:flex-row gap-8 max-w-5xl mx-auto">
-              {/* Founder Image */}
               <div className="flex-shrink-0 mx-auto md:mx-0">
                 <div className="w-48 h-48 md:w-56 md:h-56 rounded-full overflow-hidden border-4 border-accent shadow-lg">
                   <img
@@ -108,7 +107,6 @@ const About = () => {
                 </div>
               </div>
 
-              {/* Message Content */}
               <div className="flex-1 space-y-6 text-muted-foreground leading-relaxed">
                 <p className="text-lg">
                   <strong className="text-foreground">
@@ -174,7 +172,7 @@ const About = () => {
               </div>
             </div>
           </Card>
-        </div>
+        </div> */}
 
         {/* Vision Statement */}
         <div className="bg-gradient-to-r from-primary to-secondary p-8 md:p-12 rounded-2xl shadow-navy animate-fade-in">
