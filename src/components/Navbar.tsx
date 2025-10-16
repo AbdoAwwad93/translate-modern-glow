@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-scroll";
 import logo from "@/assets/logo.png";
 
 const Navbar = () => {
@@ -16,11 +17,11 @@ const Navbar = () => {
   }, []);
 
   const navLinks = [
-    { name: "Home", href: "#home" },
-    { name: "About", href: "#about" },
-    { name: "Services", href: "#services" },
-    { name: "Expertise", href: "#expertise" },
-    { name: "Contact", href: "#contact" },
+    { name: "Home", to: "home" },
+    { name: "About", to: "about" },
+    { name: "Services", to: "services" },
+    { name: "Expertise", to: "expertise" },
+    { name: "Contact", to: "contact" },
   ];
 
   return (
@@ -34,7 +35,12 @@ const Navbar = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <a href="#home" className="flex items-center gap-3 group">
+          <Link
+            to="home"
+            smooth={true}
+            duration={600}
+            className="flex items-center gap-3 group cursor-pointer"
+          >
             <img
               src={logo}
               alt="ASH Translation Co Ltd"
@@ -44,19 +50,24 @@ const Navbar = () => {
               <h1 className="text-accent font-bold text-xl">ASH TRANSLATION</h1>
               <p className="text-accent/80 text-xs">CO LTD</p>
             </div>
-          </a>
+          </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-8">
             {navLinks.map((link) => (
-              <a
+              <Link
                 key={link.name}
-                href={link.href}
-                className="text-primary-foreground hover:text-accent transition-colors duration-300 font-medium relative group"
+                to={link.to}
+                smooth={true}
+                duration={600}
+                offset={-80} // adjust for navbar height
+                spy={true}
+                activeClass="text-accent"
+                className="text-primary-foreground hover:text-accent transition-colors duration-300 font-medium relative group cursor-pointer"
               >
                 {link.name}
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-accent transition-all duration-300 group-hover:w-full"></span>
-              </a>
+              </Link>
             ))}
             <Button
               variant="default"
@@ -79,14 +90,17 @@ const Navbar = () => {
         {isMobileMenuOpen && (
           <div className="md:hidden py-4 animate-fade-in">
             {navLinks.map((link) => (
-              <a
+              <Link
                 key={link.name}
-                href={link.href}
-                className="block py-3 text-primary-foreground hover:text-accent transition-colors"
+                to={link.to}
+                smooth={true}
+                duration={600}
+                offset={-80}
                 onClick={() => setIsMobileMenuOpen(false)}
+                className="block py-3 text-primary-foreground hover:text-accent transition-colors cursor-pointer"
               >
                 {link.name}
-              </a>
+              </Link>
             ))}
             <Button
               variant="default"

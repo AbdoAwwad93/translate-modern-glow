@@ -1,103 +1,11 @@
 "use client";
-
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import image from "@/assets/hero-bg.png";
-
+import "@/components/css/hero.css";
 const Hero = () => {
   return (
     <>
-      <style>{`
-        @keyframes fade-in-up {
-          from {
-            opacity: 0;
-            transform: translateY(30px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        @keyframes fade-in-right {
-          from {
-            opacity: 0;
-            transform: translateX(50px);
-          }
-          to {
-            opacity: 1;
-            transform: translateX(0);
-          }
-        }
-
-        @keyframes float-gentle {
-          0%,
-          100% {
-            transform: translateY(0);
-          }
-          50% {
-            transform: translateY(-15px);
-          }
-        }
-
-        .animate-fade-in-up {
-          animation: fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-
-        .animate-fade-in-right {
-          animation: fade-in-right 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-
-        .float-gentle {
-          animation: float-gentle 4s ease-in-out infinite;
-        }
-
-        .card-3d {
-          transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-          transform-style: preserve-3d;
-        }
-
-        .card-3d:hover {
-          transform: translateY(-8px) scale(1.02);
-          box-shadow: 0 20px 40px rgba(234, 179, 8, 0.3);
-        }
-
-        .button-3d {
-          transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-          transform-style: preserve-3d;
-        }
-
-        .button-3d:hover {
-          transform: translateY(-4px) scale(1.05);
-          box-shadow: 0 15px 30px rgba(234, 179, 8, 0.4);
-        }
-
-        .glass-card {
-          background: rgba(255, 255, 255, 0.08);
-          backdrop-filter: blur(12px);
-          border: 1px solid rgba(255, 255, 255, 0.15);
-        }
-
-        .delay-100 {
-          animation-delay: 0.1s;
-        }
-        .delay-200 {
-          animation-delay: 0.2s;
-        }
-        .delay-300 {
-          animation-delay: 0.3s;
-        }
-        .delay-400 {
-          animation-delay: 0.4s;
-        }
-        .delay-500 {
-          animation-delay: 0.5s;
-        }
-        .delay-600 {
-          animation-delay: 0.6s;
-        }
-      `}</style>
-
       <section
         id="home"
         className="relative min-h-screen flex items-center overflow-hidden pt-20 pb-32"
