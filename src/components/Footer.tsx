@@ -1,121 +1,113 @@
 "use client";
 
-import { Mail, Phone, MapPin, Facebook, Twitter, Linkedin } from "lucide-react";
+import {
+  Mail,
+  Phone,
+  MapPin,
+  Facebook,
+  Twitter,
+  Linkedin,
+  ArrowRight,
+} from "lucide-react";
 import logo from "@/assets/logo.png";
 
 const Footer = () => {
   return (
-    <footer className="bg-gradient-to-b from-primary to-primary/95 text-primary-foreground py-16 mt-20 relative overflow-hidden">
-      {/* Decorative gradient glow */}
-      <div className="absolute inset-0 bg-accent/5 blur-3xl opacity-20 pointer-events-none"></div>
+    <footer className="relative mt-20 overflow-hidden">
+      {/* Gradient background with animated glow */}
+      <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary/95 to-primary"></div>
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.05),transparent_50%)]"></div>
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(255,255,255,0.03),transparent_50%)]"></div>
 
-      <div className="container mx-auto px-6 relative z-10">
-        {/* Top Section */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
-          {/* Company Info */}
-          <div className="flex flex-col items-start">
+      <div className="container mx-auto px-6 py-16 relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
+          {/* Logo and Description */}
+          <div>
             <div className="flex items-center gap-3 mb-4">
               <img
                 src={logo}
                 alt="ASH Translation"
-                className="h-12 w-12 rounded-lg shadow-md"
+                className="h-12 w-12 rounded-xl shadow-lg"
               />
               <div>
-                <h3 className="text-accent font-bold text-lg tracking-wide">
+                <h3 className="text-accent font-bold text-xl tracking-wide">
                   ASH TRANSLATION
                 </h3>
-                <p className="text-accent/70 text-sm">CO LTD</p>
+                <p className="text-accent/80 text-xs font-medium">CO LTD</p>
               </div>
             </div>
-            <p className="text-primary-foreground/80 text-sm leading-relaxed max-w-xs">
-              Bridging Communication Among People. Expert translation services
-              in 100+ languages, powered by a team of skilled linguists since
-              2024.
+            <p className="text-primary-foreground/70 text-sm leading-relaxed">
+              Bridging communication across 100+ languages with precision and
+              cultural expertise.
             </p>
-          </div>
-
-          {/* Quick Links */}
-          <div>
-            <h4 className="text-accent font-semibold mb-5 text-lg">
-              Quick Links
-            </h4>
-            <ul className="space-y-3">
-              {[
-                { label: "About Us", href: "#about" },
-                { label: "Services", href: "#services" },
-                { label: "Expertise", href: "#expertise" },
-                { label: "Contact", href: "#contact" },
-              ].map((link, i) => (
-                <li key={i}>
-                  <a
-                    href={link.href}
-                    className="text-primary-foreground/80 hover:text-accent transition-colors duration-300 text-sm"
-                  >
-                    {link.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
           </div>
 
           {/* Contact Info */}
           <div>
-            <h4 className="text-accent font-semibold mb-5 text-lg">
-              Contact Us
+            <h4 className="text-accent font-semibold mb-4 text-sm uppercase tracking-wider">
+              Get in Touch
             </h4>
-            <ul className="space-y-3 text-sm text-primary-foreground/80">
-              <li className="flex items-center gap-2">
-                <Mail className="w-4 h-4 text-accent" /> info@ashtranslation.com
-              </li>
-              <li className="flex items-center gap-2">
-                <Phone className="w-4 h-4 text-accent" /> +44 1234 567890
-              </li>
-              <li className="flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-accent" /> London, United
-                Kingdom
-              </li>
-            </ul>
+            <div className="space-y-3">
+              <a
+                href="mailto:info@ashtranslation.com"
+                className="flex items-start gap-3 text-primary-foreground/70 hover:text-accent transition-colors group"
+              >
+                <Mail className="w-4 h-4 mt-0.5 text-accent group-hover:scale-110 transition-transform" />
+                <span className="text-sm">info@ashtranslation.com</span>
+              </a>
+              <a
+                href="tel:+441234567890"
+                className="flex items-start gap-3 text-primary-foreground/70 hover:text-accent transition-colors group"
+              >
+                <Phone className="w-4 h-4 mt-0.5 text-accent group-hover:scale-110 transition-transform" />
+                <span className="text-sm">+44 1234 567890</span>
+              </a>
+              <div className="flex items-start gap-3 text-primary-foreground/70">
+                <MapPin className="w-4 h-4 mt-0.5 text-accent" />
+                <span className="text-sm">London, United Kingdom</span>
+              </div>
+            </div>
           </div>
 
           {/* Company Info */}
           <div>
-            <h4 className="text-accent font-semibold mb-5 text-lg">
-              Company Info
+            <h4 className="text-accent font-semibold mb-4 text-sm uppercase tracking-wider">
+              Company
             </h4>
-            <p className="text-primary-foreground/80 text-sm mb-2">
-              Company Number: 15944153
-            </p>
-            <p className="text-primary-foreground/80 text-sm mb-2">
-              Registered in England and Wales
-            </p>
-            <p className="text-primary-foreground/80 text-sm mb-4">
-              Founded: September 9th, 2024
-            </p>
+            <div className="space-y-2 text-sm text-primary-foreground/70 mb-6">
+              <p>Registered in England and Wales</p>
+              <p>Founded: September 9th, 2024</p>
+            </div>
 
-            {/* Social Icons */}
-            <div className="flex gap-4 mt-4">
-              {[Facebook, Twitter, Linkedin].map((Icon, i) => (
+            <div className="flex gap-3">
+              {[
+                { Icon: Facebook, href: "#" },
+                { Icon: Twitter, href: "#" },
+                { Icon: Linkedin, href: "#" },
+              ].map(({ Icon, href }, i) => (
                 <a
                   key={i}
-                  href="#"
-                  className="p-2 bg-accent/10 rounded-full hover:bg-accent/20 transition-all duration-300"
+                  href={href}
+                  className="w-9 h-9 rounded-lg bg-primary-foreground/10 border border-primary-foreground/20 flex items-center justify-center hover:bg-accent/20 hover:border-accent/50 transition-all duration-300 group"
                 >
-                  <Icon className="w-5 h-5 text-accent" />
+                  <Icon className="w-4 h-4 text-primary-foreground/70 group-hover:text-accent transition-colors" />
                 </a>
               ))}
             </div>
           </div>
         </div>
 
-        {/* Divider */}
-        <div className="border-t border-primary-foreground/20 pt-8 text-center">
-          <p className="text-primary-foreground/60 text-sm tracking-wide">
-            © {new Date().getFullYear()}{" "}
-            <span className="text-accent font-medium">
-              ASH Translation Co Ltd
-            </span>
-            . All rights reserved.
-          </p>
+        {/* Bottom Bar */}
+        <div className="pt-8 border-t border-primary-foreground/20">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+            <p className="text-primary-foreground/60 text-sm">
+              © {new Date().getFullYear()}{" "}
+              <span className="text-accent font-medium">
+                ASH Translation Co Ltd
+              </span>
+              . All rights reserved.
+            </p>
+          </div>
         </div>
       </div>
     </footer>
