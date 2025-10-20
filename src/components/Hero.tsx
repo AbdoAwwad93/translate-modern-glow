@@ -84,7 +84,7 @@ const Hero = () => {
                 { value: "100+", label: "Languages" },
                 { value: "50+", label: "Linguists" },
                 { value: "24/7", label: "Support" },
-                { value: "ISO", label: "Certified" },
+                //{ value: "ISO", label: "Certified" },
               ].map((stat, i) => (
                 <div
                   key={i}
