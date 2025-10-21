@@ -68,18 +68,18 @@ const Services = () => {
       description:
         "Our Transcription service converts your audio and video recordings into accurate, well-formatted text in any language. From interviews, conferences, and podcasts to legal or medical dictations, we ensure verbatim precision, clarity, and confidentiality.",
     },
-    {
-      icon: Code,
-      name: "Full Stack Development",
-      description:
-        "Our Full Stack Development service combines technical expertise and linguistic insight to build multilingual digital platforms that perform flawlessly worldwide. From front-end design to back-end architecture, our developers create responsive, secure, and scalable solutions.",
-    },
-    {
-      icon: Layout,
-      name: "Web Designing",
-      description:
-        "Our Web Designing service merges creative aesthetics with functionality to deliver multilingual websites that captivate and convert. We design user-friendly interfaces optimized for accessibility, speed, and cross-cultural appeal.",
-    },
+    // {
+    //   icon: Code,
+    //   name: "Full Stack Development",
+    //   description:
+    //     "Our Full Stack Development service combines technical expertise and linguistic insight to build multilingual digital platforms that perform flawlessly worldwide. From front-end design to back-end architecture, our developers create responsive, secure, and scalable solutions.",
+    // },
+    // {
+    //   icon: Layout,
+    //   name: "Web Designing",
+    //   description:
+    //     "Our Web Designing service merges creative aesthetics with functionality to deliver multilingual websites that captivate and convert. We design user-friendly interfaces optimized for accessibility, speed, and cross-cultural appeal.",
+    // },
     {
       icon: CheckCircle,
       name: "Auditing",
