@@ -69,12 +69,20 @@ const Navbar = () => {
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-accent transition-all duration-300 group-hover:w-full"></span>
               </Link>
             ))}
-            <Button
-              variant="default"
-              className="bg-accent text-accent-foreground hover:bg-accent/90 shadow-gold"
+            <Link
+              to="contact"
+              smooth={true}
+              duration={600}
+              offset={-80}
+              spy={true}
             >
-              Get Quote
-            </Button>
+              <Button
+                variant="default"
+                className="bg-accent text-accent-foreground hover:bg-accent/90 shadow-gold"
+              >
+                Get Quote
+              </Button>
+            </Link>
           </div>
 
           {/* Mobile Menu Button */}
@@ -102,12 +110,20 @@ const Navbar = () => {
                 {link.name}
               </Link>
             ))}
-            <Button
-              variant="default"
-              className="w-full mt-4 bg-accent text-accent-foreground hover:bg-accent/90"
+            <Link
+              to="contact"
+              smooth={true}
+              duration={600}
+              offset={-80}
+              onClick={() => setIsMobileMenuOpen(false)}
             >
-              Get Quote
-            </Button>
+              <Button
+                variant="default"
+                className="w-full mt-4 bg-accent text-accent-foreground hover:bg-accent/90"
+              >
+                Get Quote
+              </Button>
+            </Link>
           </div>
         )}
       </div>
