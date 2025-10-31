@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-scroll";
+import { Link as ScrollLink } from "react-scroll";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 import logo from "@/assets/logo.png";
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -35,7 +37,7 @@ const Navbar = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <Link
+          <ScrollLink
             to="home"
             smooth={true}
             duration={600}
@@ -50,39 +52,34 @@ const Navbar = () => {
               <h1 className="text-accent font-bold text-xl">ASH TRANSLATION</h1>
               <p className="text-accent/80 text-xs">CO LTD</p>
             </div>
-          </Link>
+          </ScrollLink>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-8">
             {navLinks.map((link) => (
-              <Link
+              <ScrollLink
                 key={link.name}
                 to={link.to}
                 smooth={true}
                 duration={600}
-                offset={-80} // adjust for navbar height
+                offset={-80}
                 spy={true}
                 activeClass="text-accent"
                 className="text-primary-foreground hover:text-accent transition-colors duration-300 font-medium relative group cursor-pointer"
               >
                 {link.name}
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-accent transition-all duration-300 group-hover:w-full"></span>
-              </Link>
+              </ScrollLink>
             ))}
-            <Link
-              to="contact"
-              smooth={true}
-              duration={600}
-              offset={-80}
-              spy={true}
+
+            {/* ✅ Route to /GetQuote */}
+            <Button
+              variant="default"
+              className="bg-accent text-accent-foreground hover:bg-accent/90 shadow-gold"
+              onClick={() => navigate("/GetQuote")}
             >
-              <Button
-                variant="default"
-                className="bg-accent text-accent-foreground hover:bg-accent/90 shadow-gold"
-              >
-                Get Quote
-              </Button>
-            </Link>
+              Get Quote
+            </Button>
           </div>
 
           {/* Mobile Menu Button */}
@@ -98,7 +95,7 @@ const Navbar = () => {
         {isMobileMenuOpen && (
           <div className="md:hidden py-4 animate-fade-in">
             {navLinks.map((link) => (
-              <Link
+              <ScrollLink
                 key={link.name}
                 to={link.to}
                 smooth={true}
@@ -108,22 +105,20 @@ const Navbar = () => {
                 className="block py-3 text-primary-foreground hover:text-accent transition-colors cursor-pointer"
               >
                 {link.name}
-              </Link>
+              </ScrollLink>
             ))}
-            <Link
-              to="contact"
-              smooth={true}
-              duration={600}
-              offset={-80}
-              onClick={() => setIsMobileMenuOpen(false)}
+
+            {/* ✅ Mobile Get Quote route */}
+            <Button
+              variant="default"
+              className="w-full mt-4 bg-accent text-accent-foreground hover:bg-accent/90"
+              onClick={() => {
+                setIsMobileMenuOpen(false);
+                navigate("/GetQuote");
+              }}
             >
-              <Button
-                variant="default"
-                className="w-full mt-4 bg-accent text-accent-foreground hover:bg-accent/90"
-              >
-                Get Quote
-              </Button>
-            </Link>
+              Get Quote
+            </Button>
           </div>
         )}
       </div>

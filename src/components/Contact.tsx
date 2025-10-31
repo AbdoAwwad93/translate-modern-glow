@@ -1,8 +1,11 @@
 import { Mail, Phone, MapPin, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { useNavigate } from "react-router-dom";
 
 const Contact = () => {
+  const navigate = useNavigate();
+
   const contactInfo = [
     {
       icon: Mail,
@@ -44,6 +47,7 @@ const Contact = () => {
           </p>
         </div>
 
+        {/* Contact Info Cards */}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
           {contactInfo.map((info, index) => (
             <Card
@@ -83,6 +87,7 @@ const Contact = () => {
               <Button
                 size="lg"
                 className="border-2 border-accent text-accent hover:bg-accent hover:text-accent-foreground text-lg px-8"
+                onClick={() => navigate("/GetQuote")}
               >
                 Request a Quote
               </Button>
@@ -94,11 +99,11 @@ const Contact = () => {
         <div className="grid md:grid-cols-3 gap-8 mt-16 max-w-4xl mx-auto">
           <div className="text-center">
             <div className="text-accent font-bold text-2xl mb-2">
-              Commitment to Quality{" "}
+              Commitment to Quality
             </div>
             <p className="text-muted-foreground">
-              Proven quality assurance processes for reliable and
-              consistent results
+              Proven quality assurance processes for reliable and consistent
+              results
             </p>
           </div>
           <div className="text-center">
