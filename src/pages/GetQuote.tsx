@@ -19,6 +19,7 @@ export default function ServiceRequestPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [selectedService, setSelectedService] = useState<string>("");
+  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -87,17 +88,32 @@ export default function ServiceRequestPage() {
     }));
   };
 
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    setUploadedFiles((prev) => [...prev, ...files]);
+    e.target.value = "";
+  };
+
+  const handleRemoveFile = (index: number) => {
+    setUploadedFiles((prev) => prev.filter((_, i) => i !== index));
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
+      const submitData = new FormData();
+      Object.entries(formData).forEach(([key, value]) => {
+        submitData.append(key, value);
+      });
+      uploadedFiles.forEach((file) => {
+        submitData.append("files", file);
+      });
+
       const response = await fetch("/api/service-request", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
+        body: submitData,
       });
 
       if (response.ok) {
@@ -116,6 +132,7 @@ export default function ServiceRequestPage() {
           preferredContact: "email",
         });
         setSelectedService("");
+        setUploadedFiles([]);
         setTimeout(() => setIsSuccess(false), 5000);
       }
     } catch (error) {
@@ -285,20 +302,8 @@ export default function ServiceRequestPage() {
                       </SelectContent>
                     </Select>
                   </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-foreground mb-3">
-                      Page Count *
-                    </label>
-                    <Input
-                      type="number"
-                      name="pageCount"
-                      value={formData.pageCount}
-                      onChange={handleInputChange}
-                      required
-                      className="w-full px-4 py-3 rounded-xl border-2 border-border bg-background text-foreground focus:border-accent focus:ring-2 focus:ring-accent/20 transition-all placeholder:text-muted-foreground"
-                    />
-                  </div>
-                  <div className="grid grid-cols-1 gap-4">
+
+                  <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-semibold text-foreground mb-3">
                         Word Count
@@ -307,6 +312,18 @@ export default function ServiceRequestPage() {
                         type="number"
                         name="wordCount"
                         value={formData.wordCount}
+                        onChange={handleInputChange}
+                        className="w-full px-4 py-3 rounded-xl border-2 border-border bg-background text-foreground focus:border-accent focus:ring-2 focus:ring-accent/20 transition-all placeholder:text-muted-foreground"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-foreground mb-3">
+                        Page Count
+                      </label>
+                      <Input
+                        type="number"
+                        name="pageCount"
+                        value={formData.pageCount}
                         onChange={handleInputChange}
                         className="w-full px-4 py-3 rounded-xl border-2 border-border bg-background text-foreground focus:border-accent focus:ring-2 focus:ring-accent/20 transition-all placeholder:text-muted-foreground"
                       />
@@ -398,6 +415,104 @@ export default function ServiceRequestPage() {
                   rows={5}
                   className="w-full px-4 py-3 rounded-xl border-2 border-border bg-background text-foreground focus:border-accent focus:ring-2 focus:ring-accent/20 transition-all placeholder:text-muted-foreground resize-none"
                 />
+              </div>
+
+              <div className="mt-8">
+                <label className="block text-sm font-semibold text-foreground mb-3">
+                  Upload Project Files (Optional)
+                </label>
+                <div className="relative">
+                  <input
+                    type="file"
+                    multiple
+                    onChange={handleFileUpload}
+                    className="hidden"
+                    id="file-upload"
+                    accept=".pdf,.doc,.docx,.txt,.xlsx,.pptx,.zip"
+                  />
+                  <label
+                    htmlFor="file-upload"
+                    className="flex items-center justify-center w-full px-4 py-8 border-2 border-dashed border-accent/40 rounded-xl bg-accent/5 hover:bg-accent/10 cursor-pointer transition-colors"
+                  >
+                    <div className="text-center">
+                      <svg
+                        className="w-10 h-10 mx-auto mb-2 text-accent"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                        />
+                      </svg>
+                      <p className="text-foreground font-medium">
+                        Click to upload
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Supported: PDF, DOC, DOCX, TXT, XLSX, PPTX, ZIP
+                      </p>
+                    </div>
+                  </label>
+                </div>
+
+                {uploadedFiles.length > 0 && (
+                  <motion.div
+                    className="mt-4 space-y-2"
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                  >
+                    <p className="text-sm font-semibold text-foreground">
+                      Uploaded Files ({uploadedFiles.length})
+                    </p>
+                    {uploadedFiles.map((file, index) => (
+                      <motion.div
+                        key={index}
+                        className="flex items-center justify-between p-3 bg-accent/10 rounded-lg border border-accent/20"
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                      >
+                        <div className="flex items-center gap-2 flex-1 min-w-0">
+                          <svg
+                            className="w-5 h-5 text-accent flex-shrink-0"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                          >
+                            <path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z" />
+                            <path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H10a1 1 0 001-1V5a1 1 0 00-1-1H3zM14 7a1 1 0 00-1 1v6.05A2.5 2.5 0 0115.95 16H17a1 1 0 001-1v-5a1 1 0 00-.293-.707l-2-2A1 1 0 0015 7h-1z" />
+                          </svg>
+                          <div className="min-w-0 flex-1">
+                            <p className="text-sm font-medium text-foreground truncate">
+                              {file.name}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              {(file.size / 1024).toFixed(2)} KB
+                            </p>
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveFile(index)}
+                          className="ml-2 text-muted-foreground hover:text-accent transition-colors flex-shrink-0"
+                        >
+                          <svg
+                            className="w-5 h-5"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                        </button>
+                      </motion.div>
+                    ))}
+                  </motion.div>
+                )}
               </div>
 
               {/* Submit Button */}
