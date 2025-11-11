@@ -14,6 +14,8 @@ import {
 } from "@/components/ui/select";
 import { motion } from "framer-motion";
 import ServicesNavbar from "@/components/services-navbar";
+import { orderService } from "../services/order-service";
+import type { OrderCreateDto } from "../types/index";
 
 export default function ServiceRequestPage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -82,20 +84,32 @@ export default function ServiceRequestPage() {
   };
 
   const handleSelectChange = (name: string, value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => {
+      let updated = { ...prev, [name]: value };
+
+      // ✅ Auto-enforce English rule for translation service
+      if (selectedService === "Translation") {
+        if (name === "languagePairFrom" && value !== "English") {
+          updated.languagePairTo = "English";
+        } else if (name === "languagePairTo" && value !== "English") {
+          updated.languagePairFrom = "English";
+        }
+      }
+
+      return updated;
+    });
   };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-    setUploadedFiles((prev) => [...prev, ...files]);
-    e.target.value = "";
+    const file = e.target.files?.[0]; // only take the first file
+    if (file) {
+      setUploadedFiles([file]); // replace any previously uploaded file
+    }
+    e.target.value = ""; // reset input
   };
 
-  const handleRemoveFile = (index: number) => {
-    setUploadedFiles((prev) => prev.filter((_, i) => i !== index));
+  const handleRemoveFile = () => {
+    setUploadedFiles([]);
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -103,40 +117,72 @@ export default function ServiceRequestPage() {
     setIsLoading(true);
 
     try {
-      const submitData = new FormData();
-      Object.entries(formData).forEach(([key, value]) => {
-        submitData.append(key, value);
-      });
-      uploadedFiles.forEach((file) => {
-        submitData.append("files", file);
-      });
-
-      const response = await fetch("/api/service-request", {
-        method: "POST",
-        body: submitData,
-      });
-
-      if (response.ok) {
-        setIsSuccess(true);
-        setFormData({
-          fullName: "",
-          email: "",
-          phone: "",
-          serviceType: "",
-          languagePairFrom: "",
-          languagePairTo: "",
-          wordCount: "",
-          pageCount: "",
-          deadline: "",
-          additionalNotes: "",
-          preferredContact: "email",
-        });
-        setSelectedService("");
-        setUploadedFiles([]);
-        setTimeout(() => setIsSuccess(false), 5000);
+      // Validate required fields first
+      if (
+        !formData.fullName ||
+        !formData.email ||
+        !formData.phone ||
+        !formData.deadline ||
+        !formData.pageCount ||
+        !selectedService ||
+        !formData.preferredContact ||
+        (selectedService === "Translation" &&
+          (!formData.languagePairFrom || !formData.languagePairTo))
+      ) {
+        alert("Please fill in all required fields.");
+        setIsLoading(false);
+        return;
       }
+
+      // ✅ NEW RULE: Must include English for Translation
+      if (
+        selectedService === "Translation" &&
+        formData.languagePairFrom !== "English" &&
+        formData.languagePairTo !== "English"
+      ) {
+        alert(
+          "For translation services, either the source or target language must be English."
+        );
+        setIsLoading(false);
+        return;
+      }
+
+      const dto: OrderCreateDto = {
+        CustomerName: formData.fullName,
+        CustomerEmail: formData.email,
+        CustomerPhoneNumber: formData.phone,
+        DeadLine: formData.deadline ? new Date(formData.deadline) : new Date(),
+        Notes: formData.additionalNotes || "",
+        PageCount: parseInt(formData.pageCount || "0"),
+        WordCount: parseInt(formData.wordCount || "0"),
+        PreferredContact: formData.preferredContact,
+        Services: selectedService ? [selectedService] : [],
+        SourceLanguage: formData.languagePairFrom || "",
+        TargetLanguage: formData.languagePairTo || "",
+        File: uploadedFiles[0] || undefined,
+      };
+
+      const result = await orderService.makeOrder(dto);
+
+      setIsSuccess(true);
+      setFormData({
+        fullName: "",
+        email: "",
+        phone: "",
+        serviceType: "",
+        languagePairFrom: "",
+        languagePairTo: "",
+        wordCount: "",
+        pageCount: "",
+        deadline: "",
+        additionalNotes: "",
+        preferredContact: "email",
+      });
+      setSelectedService("");
+      setUploadedFiles([]);
+      setTimeout(() => setIsSuccess(false), 5000);
     } catch (error) {
-      console.error("Error submitting form:", error);
+      console.error("Error submitting order:", error);
     } finally {
       setIsLoading(false);
     }
@@ -318,7 +364,7 @@ export default function ServiceRequestPage() {
                     </div>
                     <div>
                       <label className="block text-sm font-semibold text-foreground mb-3">
-                        Page Count
+                        Page Count *
                       </label>
                       <Input
                         type="number"
@@ -424,12 +470,12 @@ export default function ServiceRequestPage() {
                 <div className="relative">
                   <input
                     type="file"
-                    multiple
-                    onChange={handleFileUpload}
+                    onChange={handleFileUpload} // no multiple attribute
                     className="hidden"
                     id="file-upload"
                     accept=".pdf,.doc,.docx,.txt,.xlsx,.pptx,.zip"
                   />
+
                   <label
                     htmlFor="file-upload"
                     className="flex items-center justify-center w-full px-4 py-8 border-2 border-dashed border-accent/40 rounded-xl bg-accent/5 hover:bg-accent/10 cursor-pointer transition-colors"
@@ -494,7 +540,7 @@ export default function ServiceRequestPage() {
                         </div>
                         <button
                           type="button"
-                          onClick={() => handleRemoveFile(index)}
+                          onClick={() => handleRemoveFile()}
                           className="ml-2 text-muted-foreground hover:text-accent transition-colors flex-shrink-0"
                         >
                           <svg
