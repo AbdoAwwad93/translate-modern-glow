@@ -30,7 +30,7 @@ export const orderService = {
     }
 
     const response = await apiClient.post<GeneralResponse<Order>>(
-      "/makeOrder",
+      "/api/order/makeOrder",
       formData,
       {
         headers: { "Content-Type": "multipart/form-data" },
@@ -46,7 +46,9 @@ export const orderService = {
 
   // Get all orders (Admin only)
   async getOrders(): Promise<Order[]> {
-    const response = await apiClient.post<GeneralResponse<Order[]>>("/orders");
+    const response = await apiClient.get<GeneralResponse<Order[]>>(
+      "/api/order/getOrders"
+    );
     if (response.isSuccess) {
       return response.data;
     }
@@ -59,7 +61,7 @@ export const orderService = {
     status: UpdateOrderStatusDto
   ): Promise<Order> {
     const response = await apiClient.patch<GeneralResponse<Order>>(
-      `/orders/${orderId}`,
+      `/api/order/getOrder/${orderId}`,
       status
     );
 
