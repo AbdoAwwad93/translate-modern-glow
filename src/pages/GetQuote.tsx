@@ -111,7 +111,6 @@ export default function ServiceRequestPage() {
   const handleRemoveFile = () => {
     setUploadedFiles([]);
   };
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
@@ -126,10 +125,11 @@ export default function ServiceRequestPage() {
         !formData.pageCount ||
         !selectedService ||
         !formData.preferredContact ||
+        uploadedFiles.length === 0 || // File is required
         (selectedService === "Translation" &&
           (!formData.languagePairFrom || !formData.languagePairTo))
       ) {
-        alert("Please fill in all required fields."); //fix
+        alert("Please fill in all required fields including the file upload.");
         setIsLoading(false);
         return;
       }
@@ -151,19 +151,20 @@ export default function ServiceRequestPage() {
         CustomerName: formData.fullName,
         CustomerEmail: formData.email,
         CustomerPhoneNumber: formData.phone,
-        DeadLine: formData.deadline ? new Date(formData.deadline) : new Date(),
+        DeadLine: new Date(formData.deadline).toISOString(),
         Notes: formData.additionalNotes || "",
-        PageCount: parseInt(formData.pageCount || "0"),
+        PageCount: parseInt(formData.pageCount),
         WordCount: parseInt(formData.wordCount || "0"),
         PreferredContact: formData.preferredContact,
-        Services: selectedService ? [selectedService] : [],
-        SourceLanguage: formData.languagePairFrom || "",
-        TargetLanguage: formData.languagePairTo || "",
-        File: uploadedFiles[0] || undefined,
+        Services: [selectedService],
+        SourceLanguage: formData.languagePairFrom || undefined,
+        TargetLanguage: formData.languagePairTo || undefined,
+        File: uploadedFiles[0],
       };
 
       const result = await orderService.makeOrder(dto);
 
+      alert("Your request has been submitted successfully!");
       setIsSuccess(true);
       setFormData({
         fullName: "",
@@ -181,8 +182,13 @@ export default function ServiceRequestPage() {
       setSelectedService("");
       setUploadedFiles([]);
       setTimeout(() => setIsSuccess(false), 5000);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error submitting order:", error);
+      alert(
+        `Failed to submit order: ${
+          error.response?.data?.message || error.message
+        }`
+      );
     } finally {
       setIsLoading(false);
     }
@@ -379,14 +385,15 @@ export default function ServiceRequestPage() {
                   {/* Deadline */}
                   <div>
                     <label className="block text-sm font-semibold text-foreground mb-3">
-                      Required Deadline
+                      Required Deadline *
                     </label>
                     <Input
-                      type="date"
+                      type="datetime-local"
                       name="deadline"
                       value={formData.deadline}
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 rounded-xl border-2 border-border bg-background text-foreground focus:border-accent focus:ring-2 focus:ring-accent/20 transition-all"
+                      required
                     />
                   </div>
 

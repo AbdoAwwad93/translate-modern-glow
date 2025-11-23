@@ -12,18 +12,23 @@ export class ApiClient {
   constructor() {
     this.client = axios.create({
       baseURL: API_BASE_URL,
-      headers: {
-        "Content-Type": "application/json",
-      },
+      // Don't set default Content-Type here - let each request decide
     });
 
-    // Request interceptor: add access token
+    // Request interceptor: add access token and handle Content-Type
     this.client.interceptors.request.use((config) => {
       const token = localStorage.getItem("accessToken");
       if (token) {
         config.headers = config.headers || new axios.AxiosHeaders();
         config.headers.Authorization = `Bearer ${token}`;
       }
+
+      // Only set Content-Type to JSON if it's not FormData
+      if (!(config.data instanceof FormData)) {
+        config.headers = config.headers || new axios.AxiosHeaders();
+        config.headers["Content-Type"] = "application/json";
+      }
+
       return config;
     });
 

@@ -52,7 +52,7 @@ export interface OrderCreateDto {
   CustomerName: string;
   CustomerEmail: string;
   CustomerPhoneNumber: string;
-  DeadLine: Date;
+  DeadLine: string;
   Notes?: string;
   PageCount: number;
   WordCount?: number; // optional
