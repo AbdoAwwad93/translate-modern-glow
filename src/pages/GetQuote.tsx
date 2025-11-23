@@ -129,7 +129,7 @@ export default function ServiceRequestPage() {
         (selectedService === "Translation" &&
           (!formData.languagePairFrom || !formData.languagePairTo))
       ) {
-        alert("Please fill in all required fields.");
+        alert("Please fill in all required fields."); //fix
         setIsLoading(false);
         return;
       }

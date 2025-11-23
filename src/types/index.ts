@@ -55,11 +55,11 @@ export interface OrderCreateDto {
   DeadLine: Date;
   Notes?: string;
   PageCount: number;
-  WordCount: number;
+  WordCount?: number; // optional
   PreferredContact: string;
-  Services?: string[];
-  SourceLanguage: string;
-  TargetLanguage: string;
+  Services: string[]; // required
+  SourceLanguage?: string; // optional
+  TargetLanguage?: string; // optional
   File?: File;
 }
 
