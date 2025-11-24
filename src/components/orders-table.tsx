@@ -114,7 +114,7 @@ export default function OrdersTable({
                   <strong>Uploaded File:</strong>{" "}
                   {order.uploadedFilePath ? (
                     <a
-                      href={order.uploadedFilePath}
+                      href={`https://ash-translation-backend.up.railway.app${order.uploadedFilePath}`}
                       target="_blank"
                       className="text-accent underline"
                     >
