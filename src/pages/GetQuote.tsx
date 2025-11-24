@@ -12,14 +12,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import ServicesNavbar from "@/components/services-navbar";
 import { orderService } from "../services/order-service";
 import type { OrderCreateDto } from "../types/index";
+import { CheckCircle, AlertCircle, X } from "lucide-react";
 
 export default function ServiceRequestPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [error, setError] = useState<string>("");
   const [selectedService, setSelectedService] = useState<string>("");
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
 
@@ -101,19 +103,22 @@ export default function ServiceRequestPage() {
   };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]; // only take the first file
+    const file = e.target.files?.[0];
     if (file) {
-      setUploadedFiles([file]); // replace any previously uploaded file
+      setUploadedFiles([file]);
     }
-    e.target.value = ""; // reset input
+    e.target.value = "";
   };
 
   const handleRemoveFile = () => {
     setUploadedFiles([]);
   };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
+    setError("");
+    setIsSuccess(false);
 
     try {
       // Validate required fields first
@@ -125,11 +130,13 @@ export default function ServiceRequestPage() {
         !formData.pageCount ||
         !selectedService ||
         !formData.preferredContact ||
-        uploadedFiles.length === 0 || // File is required
+        uploadedFiles.length === 0 ||
         (selectedService === "Translation" &&
           (!formData.languagePairFrom || !formData.languagePairTo))
       ) {
-        alert("Please fill in all required fields including the file upload.");
+        setError(
+          "Please fill in all required fields including the file upload."
+        );
         setIsLoading(false);
         return;
       }
@@ -140,7 +147,7 @@ export default function ServiceRequestPage() {
         formData.languagePairFrom !== "English" &&
         formData.languagePairTo !== "English"
       ) {
-        alert(
+        setError(
           "For translation services, either the source or target language must be English."
         );
         setIsLoading(false);
@@ -164,7 +171,6 @@ export default function ServiceRequestPage() {
 
       const result = await orderService.makeOrder(dto);
 
-      alert("Your request has been submitted successfully!");
       setIsSuccess(true);
       setFormData({
         fullName: "",
@@ -181,13 +187,18 @@ export default function ServiceRequestPage() {
       });
       setSelectedService("");
       setUploadedFiles([]);
-      setTimeout(() => setIsSuccess(false), 5000);
+
+      // Scroll to top smoothly
+      window.scrollTo({ top: 0, behavior: "smooth" });
+
+      // Auto-hide success message after 8 seconds
+      setTimeout(() => setIsSuccess(false), 8000);
     } catch (error: any) {
       console.error("Error submitting order:", error);
-      alert(
-        `Failed to submit order: ${
-          error.response?.data?.message || error.message
-        }`
+      setError(
+        error.response?.data?.message ||
+          error.message ||
+          "Failed to submit order. Please try again."
       );
     } finally {
       setIsLoading(false);
@@ -235,18 +246,72 @@ export default function ServiceRequestPage() {
           </motion.div>
 
           {/* Success Message */}
-          {isSuccess && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mb-8 p-6 bg-gradient-to-r from-accent/20 to-accent/10 rounded-xl border border-accent/30 shadow-lg"
-            >
-              <p className="text-foreground font-semibold text-lg flex items-center gap-2">
-                <span className="text-accent text-2xl">✓</span>
-                Your request submitted successfully! We'll contact you shortly.
-              </p>
-            </motion.div>
-          )}
+          <AnimatePresence>
+            {isSuccess && (
+              <motion.div
+                initial={{ opacity: 0, y: -20, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -20, scale: 0.95 }}
+                transition={{ duration: 0.3 }}
+                className="mb-8 p-6 bg-gradient-to-r from-green-500/20 to-green-600/10 rounded-2xl border-2 border-green-500/30 shadow-lg backdrop-blur-sm"
+              >
+                <div className="flex items-start gap-4">
+                  <div className="flex-shrink-0">
+                    <CheckCircle className="w-7 h-7 text-green-600" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-lg font-bold text-green-700 mb-1">
+                      Quote Request Sent Successfully!
+                    </h3>
+                    <p className="text-green-600 text-sm leading-relaxed">
+                      Thank you for your request! Our team has received your
+                      information and will review it carefully. We'll contact
+                      you within 24 hours with a detailed quote.
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setIsSuccess(false)}
+                    className="flex-shrink-0 text-green-600 hover:text-green-700 transition-colors"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Error Message */}
+          <AnimatePresence>
+            {error && (
+              <motion.div
+                initial={{ opacity: 0, y: -20, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -20, scale: 0.95 }}
+                transition={{ duration: 0.3 }}
+                className="mb-8 p-6 bg-gradient-to-r from-red-500/20 to-red-600/10 rounded-2xl border-2 border-red-500/30 shadow-lg backdrop-blur-sm"
+              >
+                <div className="flex items-start gap-4">
+                  <div className="flex-shrink-0">
+                    <AlertCircle className="w-7 h-7 text-red-600" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-lg font-bold text-red-700 mb-1">
+                      Unable to Submit Request
+                    </h3>
+                    <p className="text-red-600 text-sm leading-relaxed">
+                      {error}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setError("")}
+                    className="flex-shrink-0 text-red-600 hover:text-red-700 transition-colors"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* Form Container */}
           <motion.div
@@ -472,12 +537,12 @@ export default function ServiceRequestPage() {
 
               <div className="mt-8">
                 <label className="block text-sm font-semibold text-foreground mb-3">
-                  Upload Project Files (Optional)
+                  Upload Project Files *
                 </label>
                 <div className="relative">
                   <input
                     type="file"
-                    onChange={handleFileUpload} // no multiple attribute
+                    onChange={handleFileUpload}
                     className="hidden"
                     id="file-upload"
                     accept=".pdf,.doc,.docx,.txt,.xlsx,.pptx,.zip"
@@ -573,7 +638,7 @@ export default function ServiceRequestPage() {
                 <Button
                   type="submit"
                   disabled={isLoading}
-                  className="flex-1 bg-accent hover:bg-accent/90 text-accent-foreground font-bold py-4 px-8 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg text-lg"
+                  className="flex-1 bg-accent hover:bg-accent/90 text-accent-foreground font-bold py-4 px-8 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg text-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                 >
                   {isLoading ? "Submitting..." : "Get Your Quote"}
                 </Button>
