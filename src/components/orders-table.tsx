@@ -1,26 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { Order, OrderStatus } from "../types/index";
+import { Order } from "../types/index";
 
 interface OrdersTableProps {
   orders: Order[];
-  onStatusChange: (orderId: number, newStatus: OrderStatus) => void;
+  onStatusChange: (orderId: number, newStatus: string) => void;
 }
-
-const statusMap: Record<number, OrderStatus> = {
-  0: OrderStatus.Pending,
-  1: OrderStatus.InProgress,
-  2: OrderStatus.Completed,
-  3: OrderStatus.Cancelled,
-};
-
-const reverseStatusMap: Record<OrderStatus, number> = {
-  [OrderStatus.Pending]: 0,
-  [OrderStatus.InProgress]: 1,
-  [OrderStatus.Completed]: 2,
-  [OrderStatus.Cancelled]: 3,
-};
 
 export default function OrdersTable({
   orders,
@@ -32,11 +18,19 @@ export default function OrdersTable({
     setExpandedId(expandedId === id ? null : id);
   };
 
+  const getStatusColor = (status: string): string => {
+    if (status === "Pending")
+      return "bg-yellow-100 text-yellow-800 border-yellow-300";
+    if (status === "WorkingON")
+      return "bg-blue-100 text-blue-800 border-blue-300";
+    if (status === "Done")
+      return "bg-green-100 text-green-800 border-green-300";
+    return "bg-gray-100 text-gray-800 border-gray-300";
+  };
+
   return (
     <div className="space-y-4">
       {orders.map((order) => {
-        const statusString = statusMap[order.orderStatus];
-
         return (
           <div
             key={order.id}
@@ -52,21 +46,19 @@ export default function OrdersTable({
               <span className="text-sm text-muted-foreground">
                 {order.customerEmail}
               </span>
+
+              {/* SELECT STATUS */}
               <select
-                value={statusString}
+                value={order.orderStatus}
                 onClick={(e) => e.stopPropagation()}
-                onChange={(e) =>
-                  onStatusChange(
-                    order.id,
-                    statusMap[reverseStatusMap[e.target.value as OrderStatus]]
-                  )
-                }
+                onChange={(e) => onStatusChange(order.id, e.target.value)}
                 className="px-3 py-1.5 rounded-lg bg-white text-foreground border border-border text-sm font-medium hover:ring-1 hover:ring-accent focus:outline-none"
               >
-                <option value="pending">Pending</option>
-                <option value="in-progress">In Progress</option>
-                <option value="completed">Completed</option>
+                <option value="Pending">Pending</option>
+                <option value="WorkingON">WorkingON</option>
+                <option value="Done">Done</option>
               </select>
+
               <button
                 onClick={(e) => {
                   e.stopPropagation();
@@ -87,6 +79,17 @@ export default function OrdersTable({
               } bg-muted/20`}
             >
               <div className="space-y-2 text-sm">
+                <p>
+                  <strong>Status:</strong>{" "}
+                  <span
+                    className={`inline-block px-2 py-1 rounded-md text-xs font-semibold border ${getStatusColor(
+                      order.orderStatus
+                    )}`}
+                  >
+                    {order.orderStatus}
+                  </span>
+                </p>
+
                 <p>
                   <strong>Phone:</strong> {order.customerPhoneNumber}
                 </p>
@@ -110,13 +113,15 @@ export default function OrdersTable({
                   <strong>Deadline:</strong>{" "}
                   {new Date(order.deadLine).toLocaleDateString()}
                 </p>
+
                 <p>
                   <strong>Uploaded File:</strong>{" "}
                   {order.uploadedFilePath ? (
                     <a
                       href={`https://ash-translation-backend.up.railway.app${order.uploadedFilePath}`}
                       target="_blank"
-                      className="text-accent underline"
+                      rel="noopener noreferrer"
+                      className="text-accent underline hover:text-accent/80"
                     >
                       Download
                     </a>

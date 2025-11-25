@@ -5,9 +5,9 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAuth } from "../context/auth-context";
 import { orderService } from "../services/order-service";
-import type { Order, OrderStatus } from "../types/index";
+import type { Order } from "../types/index";
 import OrdersTable from "../components/orders-table";
-import ServicesNavbar from "@/components/services-navbar";
+import ServicesNavbar from "../components/services-navbar";
 
 export default function OrdersPage() {
   const navigate = useNavigate();
@@ -33,17 +33,20 @@ export default function OrdersPage() {
     }
   };
 
-  const handleStatusChange = async (
-    orderId: number,
-    newStatus: OrderStatus
-  ) => {
+  const handleStatusChange = async (orderId: number, newStatus: string) => {
     try {
-      const updatedOrder = await orderService.updateOrderStatus(orderId, {
-        status: newStatus,
-      } as any);
+      const updatedOrder = await orderService.updateOrderStatus(
+        orderId,
+        newStatus
+      );
       setOrders(orders.map((o) => (o.id === orderId ? updatedOrder : o)));
+      setError("");
     } catch (err: any) {
-      setError(err.message || "Failed to update order status");
+      setError(
+        err.response?.data?.message ||
+          err.message ||
+          "Failed to update order status"
+      );
     }
   };
 

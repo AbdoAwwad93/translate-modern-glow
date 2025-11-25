@@ -12,17 +12,10 @@ export interface TokenResponse {
 }
 
 export interface GeneralResponse<T = any> {
-  isSuccess: boolean; // unified boolean
+  isSuccess: boolean;
   message: string;
   data?: T;
   errors?: any;
-}
-
-export enum OrderStatus {
-  Pending = "Pending",
-  InProgress = "InProgress",
-  Completed = "Completed",
-  Cancelled = "Cancelled",
 }
 
 export interface Order {
@@ -38,14 +31,9 @@ export interface Order {
   services: string[];
   sourceLanguage: string;
   targetLanguage: string;
-  orderStatus: OrderStatus;
+  orderStatus: string;
   uploadedFilePath?: string;
   createdAt?: string;
-
-  // Remove unused or mis-typed fields:
-  status?: any;
-  email?: ReactNode;
-  clientName?: ReactNode;
 }
 
 export interface OrderCreateDto {
@@ -61,10 +49,6 @@ export interface OrderCreateDto {
   SourceLanguage?: string; // optional
   TargetLanguage?: string; // optional
   File?: File;
-}
-
-export interface UpdateOrderStatusDto {
-  OrderStatus: OrderStatus | string; // matches backend property
 }
 
 export interface ForgotPasswordPayload {

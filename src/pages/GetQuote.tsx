@@ -194,7 +194,6 @@ export default function ServiceRequestPage() {
       // Auto-hide success message after 8 seconds
       setTimeout(() => setIsSuccess(false), 8000);
     } catch (error: any) {
-      console.error("Error submitting order:", error);
       setError(
         error.response?.data?.message ||
           error.message ||

@@ -1,10 +1,5 @@
 import { apiClient } from "../api/client";
-import type {
-  Order,
-  UpdateOrderStatusDto,
-  OrderCreateDto,
-  GeneralResponse,
-} from "../types/index";
+import type { Order, OrderCreateDto, GeneralResponse } from "../types/index";
 
 export const orderService = {
   // Make a new order (any user)
@@ -51,11 +46,6 @@ export const orderService = {
     // File must be appended last (common practice)
     formData.append("File", dto.File);
 
-    console.log("FormData content:");
-    for (const [key, value] of formData.entries()) {
-      console.log(key, value);
-    }
-
     try {
       const response = await apiClient.post<GeneralResponse<Order>>(
         "/api/order/makeOrder",
@@ -65,24 +55,6 @@ export const orderService = {
       if (response.isSuccess) return response.data;
       throw new Error(response.message || "Failed to make order");
     } catch (error: any) {
-      console.error("API Error Details:", {
-        status: error.response?.status,
-        statusText: error.response?.statusText,
-        data: error.response?.data,
-        errors: error.response?.data?.errors,
-        title: error.response?.data?.title,
-      });
-
-      // Show specific validation errors if available
-      if (error.response?.data?.errors) {
-        console.error("Validation Errors:");
-        Object.entries(error.response.data.errors).forEach(
-          ([field, messages]) => {
-            console.error(`  ${field}:`, messages);
-          }
-        );
-      }
-
       throw error;
     }
   },
@@ -101,19 +73,20 @@ export const orderService = {
   },
 
   // Update order status (Admin only)
-  async updateOrderStatus(
-    orderId: number,
-    status: UpdateOrderStatusDto
-  ): Promise<Order> {
-    const response = await apiClient.patch<GeneralResponse<Order>>(
-      `/api/order/updateStatus/${orderId}`,
-      status
-    );
+  async updateOrderStatus(orderId: number, newStatus: string): Promise<Order> {
+    try {
+      const response = await apiClient.patch<GeneralResponse<Order>>(
+        `/api/order/getOrder/${orderId}`,
+        { orderStatus: newStatus }
+      );
 
-    if (response.isSuccess) {
-      return response.data;
+      if (response.isSuccess) {
+        return response.data;
+      }
+
+      throw new Error(response.message || "Failed to update order status");
+    } catch (error: any) {
+      throw error;
     }
-
-    throw new Error(response.message || "Failed to update order status");
   },
 };
