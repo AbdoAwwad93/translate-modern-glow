@@ -36,7 +36,7 @@ export default function ServiceRequestPage() {
     pageCount: "",
     deadline: "",
     additionalNotes: "",
-    preferredContact: "email",
+    preferredContact: "Email",
   });
 
   const serviceTypes = [
@@ -183,7 +183,7 @@ export default function ServiceRequestPage() {
         pageCount: "",
         deadline: "",
         additionalNotes: "",
-        preferredContact: "email",
+        preferredContact: "Email",
       });
       setSelectedService("");
       setUploadedFiles([]);
@@ -412,9 +412,9 @@ export default function ServiceRequestPage() {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="email">Email</SelectItem>
-                        <SelectItem value="whatsapp">WhatsApp</SelectItem>
-                        <SelectItem value="phone">Phone Call</SelectItem>
+                        <SelectItem value="Email">Email</SelectItem>
+                        <SelectItem value="Whatsapp">WhatsApp</SelectItem>
+                        <SelectItem value="PhoneCall">Phone Call</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>

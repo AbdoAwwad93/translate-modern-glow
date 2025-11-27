@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAuth } from "../context/auth-context";
@@ -8,10 +8,27 @@ import { orderService } from "../services/order-service";
 import type { Order } from "../types/index";
 import OrdersTable from "../components/orders-table";
 import ServicesNavbar from "../components/services-navbar";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  RefreshCw,
+  LogOut,
+  AlertCircle,
+  FileText,
+  Clock,
+  CheckCircle2,
+  Loader2,
+  TrendingUp,
+} from "lucide-react";
+import { isPast } from "date-fns";
+import { useToast } from "@/hooks/use-toast";
 
 export default function OrdersPage() {
   const navigate = useNavigate();
   const { logout } = useAuth();
+  const { toast } = useToast();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -27,7 +44,13 @@ export default function OrdersPage() {
       const data = await orderService.getOrders();
       setOrders(data);
     } catch (err: any) {
-      setError(err.message || "Failed to load orders");
+      const errorMessage = err.message || "Failed to load orders";
+      setError(errorMessage);
+      toast({
+        title: "Error loading orders",
+        description: errorMessage,
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
@@ -41,12 +64,21 @@ export default function OrdersPage() {
       );
       setOrders(orders.map((o) => (o.id === orderId ? updatedOrder : o)));
       setError("");
+      toast({
+        title: "Status updated",
+        description: `Order #${orderId} status changed to ${newStatus}`,
+      });
     } catch (err: any) {
-      setError(
+      const errorMessage =
         err.response?.data?.message ||
-          err.message ||
-          "Failed to update order status"
-      );
+        err.message ||
+        "Failed to update order status";
+      setError(errorMessage);
+      toast({
+        title: "Error updating status",
+        description: errorMessage,
+        variant: "destructive",
+      });
     }
   };
 
@@ -55,10 +87,61 @@ export default function OrdersPage() {
     navigate("/admin/ash/login");
   };
 
+  // Calculate statistics
+  const statistics = useMemo(() => {
+    const total = orders.length;
+    const pending = orders.filter((o) => o.orderStatus === "Pending").length;
+    const workingOn = orders.filter((o) => o.orderStatus === "WorkingON").length;
+    const done = orders.filter((o) => o.orderStatus === "Done").length;
+    
+    const overdue = orders.filter((o) => {
+      if (!o.deadLine) return false;
+      return isPast(new Date(o.deadLine)) && o.orderStatus !== "Done";
+    }).length;
+
+    return {
+      total,
+      pending,
+      workingOn,
+      done,
+      overdue,
+    };
+  }, [orders]);
+
+  const StatCard = ({
+    title,
+    value,
+    icon: Icon,
+    className = "",
+    trend,
+  }: {
+    title: string;
+    value: number;
+    icon: React.ElementType;
+    className?: string;
+    trend?: string;
+  }) => (
+    <Card className={className}>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-sm font-medium">{title}</CardTitle>
+        <Icon className="h-4 w-4 text-muted-foreground" />
+      </CardHeader>
+      <CardContent>
+        <div className="text-2xl font-bold">{value}</div>
+        {trend && (
+          <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
+            <TrendingUp className="h-3 w-3" />
+            {trend}
+          </p>
+        )}
+      </CardContent>
+    </Card>
+  );
+
   return (
     <>
       <ServicesNavbar />
-      <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted flex items-center justify-center px-4 py-20 relative overflow-hidden">
+      <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted relative overflow-hidden pt-20">
         {/* Decorative Background */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
           <div className="absolute top-20 right-20 w-96 h-96 bg-accent/10 rounded-full blur-3xl animate-pulse"></div>
@@ -76,63 +159,143 @@ export default function OrdersPage() {
           ></div>
         </div>
 
-        {/* Card */}
-        <motion.div
-          className="relative z-10 w-full max-w-6xl bg-card/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-border/50 p-10"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          {/* Header */}
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <h1 className="text-3xl font-bold text-foreground">
-                ASH <span className="text-accent">Translation</span>
-              </h1>
-              <p className="text-muted-foreground">Translation Requests</p>
+        {/* Main Content */}
+        <div className="relative z-10 container mx-auto px-4 py-6 sm:py-8 max-w-7xl">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 sm:mb-8">
+              <div className="flex-1 min-w-0">
+                <h1 className="text-3xl sm:text-4xl font-bold text-foreground mb-2">
+                  ASH <span className="text-accent">Translation</span>
+                </h1>
+                <p className="text-sm sm:text-base text-muted-foreground">
+                  Admin Dashboard - Manage and track all translation orders
+                </p>
+              </div>
+              <div className="flex gap-2 shrink-0 w-full sm:w-auto">
+                <Button
+                  onClick={fetchOrders}
+                  disabled={loading}
+                  variant="outline"
+                  className="gap-2 flex-1 sm:flex-initial"
+                  size="sm"
+                >
+                  <RefreshCw
+                    className={`h-4 w-4 shrink-0 ${loading ? "animate-spin" : ""}`}
+                  />
+                  Refresh
+                </Button>
+                <Button
+                  onClick={handleLogout}
+                  variant="destructive"
+                  className="gap-2 flex-1 sm:flex-initial"
+                  size="sm"
+                >
+                  <LogOut className="h-4 w-4 shrink-0" />
+                  Logout
+                </Button>
+              </div>
             </div>
-            <button
-              onClick={handleLogout}
-              className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-xl transition-all duration-300 shadow-lg"
-            >
-              Logout
-            </button>
-          </div>
 
-          {/* Error */}
-          {error && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mb-6 p-3 bg-red-100 border border-red-200 text-red-600 rounded-lg text-sm font-medium"
-            >
-              {error}
-            </motion.div>
-          )}
+            {/* Error Alert */}
+            {error && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mb-6"
+              >
+                <Alert variant="destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertTitle>Error</AlertTitle>
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              </motion.div>
+            )}
 
-          {/* Orders Section */}
-          <div className="mb-6 flex justify-between items-center">
-            <p className="text-muted-foreground">
-              Manage and track all incoming translation orders
-            </p>
-            <button
-              onClick={fetchOrders}
-              className="bg-accent hover:bg-accent/90 text-accent-foreground font-bold py-2 px-4 rounded-xl transition-all duration-300 shadow-lg"
-            >
-              Refresh
-            </button>
-          </div>
+            {/* Statistics Cards */}
+            {!loading && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 mb-8"
+              >
+                <StatCard
+                  title="Total Orders"
+                  value={statistics.total}
+                  icon={FileText}
+                  className="lg:col-span-1"
+                />
+                <StatCard
+                  title="Pending"
+                  value={statistics.pending}
+                  icon={Clock}
+                  className="border-amber-200 dark:border-amber-800"
+                />
+                <StatCard
+                  title="In Progress"
+                  value={statistics.workingOn}
+                  icon={Loader2}
+                  className="border-blue-200 dark:border-blue-800"
+                />
+                <StatCard
+                  title="Completed"
+                  value={statistics.done}
+                  icon={CheckCircle2}
+                  className="border-green-200 dark:border-green-800"
+                />
+                <StatCard
+                  title="Overdue"
+                  value={statistics.overdue}
+                  icon={AlertCircle}
+                  className="border-red-300 dark:border-red-700 bg-red-50/50 dark:bg-red-950/20"
+                />
+              </motion.div>
+            )}
 
-          {/* Orders Table or Loading */}
-          {loading ? (
-            <div className="flex flex-col items-center justify-center py-20">
-              <div className="spinner mb-4"></div>
-              <p className="text-muted-foreground">Loading orders...</p>
-            </div>
-          ) : (
-            <OrdersTable orders={orders} onStatusChange={handleStatusChange} />
-          )}
-        </motion.div>
+            {/* Loading State */}
+            {loading && (
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 mb-8">
+                  {[...Array(5)].map((_, i) => (
+                    <Card key={i}>
+                      <CardHeader>
+                        <Skeleton className="h-4 w-20" />
+                      </CardHeader>
+                      <CardContent>
+                        <Skeleton className="h-8 w-16" />
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+                <Card>
+                  <CardContent className="flex flex-col items-center justify-center py-20">
+                    <Loader2 className="h-8 w-8 animate-spin text-muted-foreground mb-4" />
+                    <p className="text-muted-foreground">Loading orders...</p>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
+
+            {/* Orders Table */}
+            {!loading && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+              >
+                <OrdersTable
+                  orders={orders}
+                  onStatusChange={handleStatusChange}
+                />
+              </motion.div>
+            )}
+          </motion.div>
+        </div>
       </div>
     </>
   );
